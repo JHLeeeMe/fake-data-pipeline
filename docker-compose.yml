@@ -1,0 +1,106 @@
+version: '3.1'
+
+services:
+  #########
+  # SPARK #
+  #########
+  master:
+    image: jhleeeme/spark:2.4.0
+    container_name: master
+    hostname: master
+    stdin_open: true # -i option
+    tty: true        # -t option
+    ports: 
+      - 28088:8088
+    environment: 
+      - SLAVE_NUM=3
+    depends_on:
+      - slave-1
+      - slave-2
+      - slave-3
+    networks:
+      spark-cluster:
+        ipv4_address: 10.0.0.10
+
+  slave-1:
+    image: jhleeeme/spark:2.4.0
+    container_name: slave-1
+    hostname: slave-1
+    stdin_open: true # -i option
+    tty: true        # -t option
+    networks:
+      spark-cluster:
+        ipv4_address: 10.0.0.11
+
+  slave-2:
+    image: jhleeeme/spark:2.4.0
+    container_name: slave-2
+    hostname: slave-2
+    stdin_open: true # -i option
+    tty: true        # -t option
+    networks:
+      spark-cluster:
+        ipv4_address: 10.0.0.12
+
+  slave-3:
+    image: jhleeeme/spark:2.4.0
+    container_name: slave-3
+    hostname: slave-3
+    stdin_open: true # -i option
+    tty: true        # -t option
+    networks:
+      spark-cluster:
+        ipv4_address: 10.0.0.13
+
+  #########
+  # KAFKA #
+  #########
+  kafka-single-node:
+    image: jhleeeme/kafka-single-node:2.11-2.4.1
+    container_name: kafka-single-node
+    hostname: kafka-single-node
+    restart: always
+    environment:
+      - CREATE_TOPICS=iot,words
+    networks:
+      spark-cluster:
+        ipv4_address: 10.0.0.30
+
+  ##############
+  # POSTGRESQL #
+  ##############
+  postgres:
+    image: postgres:latest
+    container_name: postgresql
+    hostname: postgresql
+    restart: always
+    environment:
+      # - POSTGRES_USER=<user-name>
+      # - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=pipeline_db
+    networks:
+      spark-cluster:
+        ipv4_address: 10.0.0.40
+
+  ###########
+  # GRAFANA #
+  ###########
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    hostname: grafana
+    restart: always
+    ports:
+      - 3000:3000
+    depends_on:
+      - postgres
+    networks:
+      spark-cluster:
+        ipv4_address: 10.0.0.50
+
+############
+# Networks #
+############
+networks:
+  spark-cluster:
+    external: true
