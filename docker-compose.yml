@@ -94,6 +94,7 @@ services:
       - 3000:3000
     depends_on:
       - postgres
+      - kafka-single-node
     networks:
       spark-cluster:
         ipv4_address: 10.0.0.50
