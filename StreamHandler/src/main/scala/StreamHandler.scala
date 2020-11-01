@@ -25,7 +25,6 @@ object StreamHandler {
     val inputDF = spark.readStream
       .format("kafka")
       .options(Map(
-        //"kafka.bootstrap.servers" -> "10.0.0.20:9092",
         "kafka.bootstrap.servers" -> "kafka-single-node:9092",
         "subscribe" -> "iot,words")
       )
