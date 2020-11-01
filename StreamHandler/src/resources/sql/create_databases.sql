@@ -1,0 +1,3 @@
+DROP DATABASE IF EXISTS pipeline_db;
+
+CREATE DATABASE IF NOT EXISTS pipeline_db;

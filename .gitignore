@@ -1,0 +1,11 @@
+.python-version
+secrets/
+
+# sbt
+bin/
+project/
+target/
+build/
+
+#general
+*.class
