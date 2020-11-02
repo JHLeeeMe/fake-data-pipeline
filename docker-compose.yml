@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3.8'
 
 services:
   #########
@@ -19,7 +19,7 @@ services:
       - slave-2
       - slave-3
     networks:
-      spark-cluster:
+      net:
         ipv4_address: 10.0.0.10
 
   slave-1:
@@ -29,7 +29,7 @@ services:
     stdin_open: true # -i option
     tty: true        # -t option
     networks:
-      spark-cluster:
+      net:
         ipv4_address: 10.0.0.11
 
   slave-2:
@@ -39,7 +39,7 @@ services:
     stdin_open: true # -i option
     tty: true        # -t option
     networks:
-      spark-cluster:
+      net:
         ipv4_address: 10.0.0.12
 
   slave-3:
@@ -49,7 +49,7 @@ services:
     stdin_open: true # -i option
     tty: true        # -t option
     networks:
-      spark-cluster:
+      net:
         ipv4_address: 10.0.0.13
 
   #########
@@ -63,7 +63,7 @@ services:
     environment:
       - CREATE_TOPICS=iot,words
     networks:
-      spark-cluster:
+      net:
         ipv4_address: 10.0.0.30
 
   ##############
@@ -75,11 +75,12 @@ services:
     hostname: postgresql
     restart: always
     environment:
-      # - POSTGRES_USER=<user-name>
-      # - POSTGRES_PASSWORD=pass
+      # - POSTGRES_USER=<user>
+      # - POSTGRES_PASSWORD=<password>
+      - POSTGRES_HOST_AUTH_METHOD=trust
       - POSTGRES_DB=pipeline_db
     networks:
-      spark-cluster:
+      net:
         ipv4_address: 10.0.0.40
 
   ###########
@@ -96,12 +97,16 @@ services:
       - postgres
       - kafka-single-node
     networks:
-      spark-cluster:
+      net:
         ipv4_address: 10.0.0.50
 
 ############
 # Networks #
 ############
 networks:
-  spark-cluster:
-    external: true
+  net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.0.0/24
+    #external: true
