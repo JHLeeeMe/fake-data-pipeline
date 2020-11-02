@@ -10,6 +10,8 @@ services:
     hostname: master
     stdin_open: true # -i option
     tty: true        # -t option
+    volumes:
+      - .:/root/fake-data-pipeline/.
     ports: 
       - 28088:8088
     environment: 
