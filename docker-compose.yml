@@ -62,8 +62,8 @@ services:
     container_name: kafka-single-node
     hostname: kafka-single-node
     restart: always
-    environment:
-      - CREATE_TOPICS=iot,words
+    #environment:
+    #  - CREATE_TOPICS=iot,words
     networks:
       net:
         ipv4_address: 10.0.0.30
