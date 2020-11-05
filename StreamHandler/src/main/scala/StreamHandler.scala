@@ -5,8 +5,8 @@ import org.apache.spark.sql.types._
 
 //import java.util.Properties
 
-case class IOTData(device: String, temp: Double, humd: Double, pres: Double)
-case class WordsData(author: String, text: String, words:Int, length: Int)
+//case class IOTData(device: String, temp: Double, humd: Double, pres: Double)
+//case class WordsData(author: String, text: String, words:Int, length: Int)
 
 object StreamHandler {
   def main(args: Array[String]): Unit = {
@@ -30,26 +30,36 @@ object StreamHandler {
       )
       .load()
 
-    val rawDS = inputDF
-      .selectExpr("topic", "CAST(value AS STRING)").as[(String,String)]
+    //val rawDS = inputDF
+    //  .selectExpr("topic", "CAST(value AS STRING)").as[(String, String)]
+    val rawDF = inputDF
+      .selectExpr("topic", "CAST(value AS STRING)", "timestamp")
 
-    val query = rawDS.writeStream
+    val query = rawDF.writeStream
       .trigger(Trigger.ProcessingTime("5 seconds"))
-      .foreachBatch { (batchDS: Dataset[(String, String)], _) =>
+      .foreachBatch { (batchDF: DataFrame, _) =>
         // cache
-        batchDS.persist()
+        batchDF.persist()
 
         // Topic: iot
-        batchDS.filter(_._1 == "iot")
-          .map { _._2.split(",") }
-          .map { x => 
-            IOTData(x(1), x(2).toDouble, x(3).toDouble, x(4).toDouble)
-          }
+        batchDF.where($"topic" === "iot")
+          .withColumn("_tmp", split($"value", ","))
+          .select(
+            $"timestamp".alias("created_time"),
+            //$"_tmp".getItem(0).as("created_time"),
+            $"_tmp".getItem(1).as("device"),
+            $"_tmp".getItem(2).as("temp"),
+            $"_tmp".getItem(3).as("humd"),
+            $"_tmp".getItem(4).as("pres")
+          )
           .groupBy("device")
-          .agg(avg("temp"), avg("humd"), avg("pres"))
+          .agg(avg("temp"), avg("humd"), avg("pres"), avg("created_time"))
           .withColumnRenamed("avg(temp)", "temp")
           .withColumnRenamed("avg(humd)", "humd")
           .withColumnRenamed("avg(pres)", "pres")
+          .withColumnRenamed("avg(created_time)", "created_time")
+          .withColumn("ts", to_utc_timestamp(to_timestamp($"created_time"), "Asia/Seoul"))
+          .drop("created_time")
           .write
           .format("jdbc")
           .options(jdbcOptions(dbtable="iot_tb"))
@@ -57,26 +67,74 @@ object StreamHandler {
           .save()
 
         // Topic: words
-        batchDS.filter(_._1 == "words")
-          .map { _._2.split(",") }
-          .map { x => 
-            WordsData(x(0), x(1), x(1).split(" ").length, x(1).length) 
-          }
-          .write
-          .format("jdbc")
-          .options(jdbcOptions(dbtable="words_tb"))
-          .mode("append")
-          .save()
+        //batchDS.filter(_._1 == "words")
+        //  .map { _._2.split(",") }
+        //  .map { x => 
+        //    WordsData(x(0), x(1), x(1).split(" ").length, x(1).length) 
+        //  }
+        //  .write
+        //  .format("jdbc")
+        //  .options(jdbcOptions(dbtable="words_tb"))
+        //  .mode("append")
+        //  .save()
 
-        println("write to postgresql")
+        //println("write to postgresql")
 
-        // uncache
-        batchDS.unpersist()
+        //// uncache
+        batchDF.unpersist()
       }
       .outputMode("update")
+      //.format("console")
       .start()
 
     query.awaitTermination()
+
+    //val query = rawDS.writeStream
+    //  .trigger(Trigger.ProcessingTime("5 seconds"))
+    //  .foreachBatch { (batchDS: Dataset[(String, String)], _) =>
+    //    // cache
+    //    batchDS.persist()
+
+    //    // Topic: iot
+    //    batchDS.filter(_._1 == "iot")
+    //      .map { _._2.split(",") }
+    //      .map { x => 
+    //        IOTData(x(1), x(2).toDouble, x(3).toDouble, x(4).toDouble, current_timestamp().cast(DataTypes.TimestampType))
+    //      }
+    //      .groupBy("device")
+    //      .agg(avg("temp"), avg("humd"), avg("pres"), avg("created_time"))
+    //      .withColumnRenamed("avg(temp)", "temp")
+    //      .withColumnRenamed("avg(humd)", "humd")
+    //      .withColumnRenamed("avg(pres)", "pres")
+    //      .withColumnRenamed("avg(created_time)", "created_time")
+    //      .write
+    //      .format("jdbc")
+    //      .options(jdbcOptions(dbtable="iot_tb"))
+    //      .mode("append")
+    //      .save()
+
+    //    // Topic: words
+    //    //batchDS.filter(_._1 == "words")
+    //    //  .map { _._2.split(",") }
+    //    //  .map { x => 
+    //    //    WordsData(x(0), x(1), x(1).split(" ").length, x(1).length) 
+    //    //  }
+    //    //  .write
+    //    //  .format("jdbc")
+    //    //  .options(jdbcOptions(dbtable="words_tb"))
+    //    //  .mode("append")
+    //    //  .save()
+
+    //    //println("write to postgresql")
+
+    //    //// uncache
+    //    batchDS.unpersist()
+    //  }
+    //  .outputMode("update")
+    //  //.format("console")
+    //  .start()
+
+    //query.awaitTermination()
   }
 
   def jdbcOptions(url: String = "jdbc:postgresql://postgresql:5432/pipeline_db", 
