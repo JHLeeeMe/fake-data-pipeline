@@ -3,13 +3,13 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.sql.streaming._
 import org.apache.spark.sql.types._
 
-//import java.util.Properties
-
 //case class IOTData(device: String, temp: Double, humd: Double, pres: Double)
 //case class WordsData(author: String, text: String, words:Int, length: Int)
 
 object StreamHandler {
   def main(args: Array[String]): Unit = {
+    //import java.util.Properties
+    //
     //// properties for jdbc
     //val properties = new Properties()
     //properties.put("user", "postgres")
@@ -17,6 +17,7 @@ object StreamHandler {
 
     val spark = SparkSession
       .builder
+      .master("yarn")
       .appName("Stream Handler")
       .getOrCreate()
 
@@ -30,10 +31,7 @@ object StreamHandler {
       )
       .load()
 
-    //val rawDS = inputDF
-    //  .selectExpr("topic", "CAST(value AS STRING)").as[(String, String)]
-    val rawDF = inputDF
-      .selectExpr("topic", "CAST(value AS STRING)", "timestamp")
+    val rawDF = inputDF.selectExpr("topic", "CAST(value AS STRING)", "timestamp")
 
     val query = rawDF.writeStream
       .trigger(Trigger.ProcessingTime("5 seconds"))
@@ -45,8 +43,7 @@ object StreamHandler {
         batchDF.where($"topic" === "iot")
           .withColumn("_tmp", split($"value", ","))
           .select(
-            $"timestamp".alias("created_time"),
-            //$"_tmp".getItem(0).as("created_time"),
+            $"_tmp".getItem(0).as("created_time"),  // timestamp in value column
             $"_tmp".getItem(1).as("device"),
             $"_tmp".getItem(2).as("temp"),
             $"_tmp".getItem(3).as("humd"),
@@ -58,8 +55,7 @@ object StreamHandler {
           .withColumnRenamed("avg(humd)", "humd")
           .withColumnRenamed("avg(pres)", "pres")
           .withColumnRenamed("avg(created_time)", "created_time")
-          .withColumn("ts", to_utc_timestamp(to_timestamp($"created_time"), "Asia/Seoul"))
-          .drop("created_time")
+          .withColumn("created_time", to_timestamp($"created_time"))
           .write
           .format("jdbc")
           .options(jdbcOptions(dbtable="iot_tb"))
@@ -67,24 +63,28 @@ object StreamHandler {
           .save()
 
         // Topic: words
-        //batchDS.filter(_._1 == "words")
-        //  .map { _._2.split(",") }
-        //  .map { x => 
-        //    WordsData(x(0), x(1), x(1).split(" ").length, x(1).length) 
-        //  }
-        //  .write
-        //  .format("jdbc")
-        //  .options(jdbcOptions(dbtable="words_tb"))
-        //  .mode("append")
-        //  .save()
+        batchDF.where($"topic" === "words")
+          .withColumn("_tmp", split($"value", ","))
+          .select(
+            $"timestamp".alias("created_time"),  // timestamp in timestamp column
+            $"_tmp".getItem(0).as("author"),
+            $"_tmp".getItem(1).as("text")
+          )
+          .withColumn("number_of_words", size(split($"text", " ")))
+          .withColumn("length", length($"text"))
+          //.withColumn("created_time", to_timestamp($"created_time"))
+          .write
+          .format("jdbc")
+          .options(jdbcOptions(dbtable="words_tb"))
+          .mode("append")
+          .save()
 
-        //println("write to postgresql")
+        println("write to postgresql")
 
-        //// uncache
+        // uncache
         batchDF.unpersist()
       }
       .outputMode("update")
-      //.format("console")
       .start()
 
     query.awaitTermination()
@@ -99,14 +99,13 @@ object StreamHandler {
     //    batchDS.filter(_._1 == "iot")
     //      .map { _._2.split(",") }
     //      .map { x => 
-    //        IOTData(x(1), x(2).toDouble, x(3).toDouble, x(4).toDouble, current_timestamp().cast(DataTypes.TimestampType))
+    //        IOTData(x(1), x(2).toDouble, x(3).toDouble, x(4).toDouble)
     //      }
     //      .groupBy("device")
-    //      .agg(avg("temp"), avg("humd"), avg("pres"), avg("created_time"))
+    //      .agg(avg("temp"), avg("humd"), avg("pres"))
     //      .withColumnRenamed("avg(temp)", "temp")
     //      .withColumnRenamed("avg(humd)", "humd")
     //      .withColumnRenamed("avg(pres)", "pres")
-    //      .withColumnRenamed("avg(created_time)", "created_time")
     //      .write
     //      .format("jdbc")
     //      .options(jdbcOptions(dbtable="iot_tb"))
@@ -114,20 +113,20 @@ object StreamHandler {
     //      .save()
 
     //    // Topic: words
-    //    //batchDS.filter(_._1 == "words")
-    //    //  .map { _._2.split(",") }
-    //    //  .map { x => 
-    //    //    WordsData(x(0), x(1), x(1).split(" ").length, x(1).length) 
-    //    //  }
-    //    //  .write
-    //    //  .format("jdbc")
-    //    //  .options(jdbcOptions(dbtable="words_tb"))
-    //    //  .mode("append")
-    //    //  .save()
+    //    batchDS.filter(_._1 == "words")
+    //      .map { _._2.split(",") }
+    //      .map { x => 
+    //        WordsData(x(0), x(1), x(1).split(" ").length, x(1).length) 
+    //      }
+    //      .write
+    //      .format("jdbc")
+    //      .options(jdbcOptions(dbtable="words_tb"))
+    //      .mode("append")
+    //      .save()
 
-    //    //println("write to postgresql")
+    //    println("write to postgresql")
 
-    //    //// uncache
+    //    // uncache
     //    batchDS.unpersist()
     //  }
     //  .outputMode("update")
