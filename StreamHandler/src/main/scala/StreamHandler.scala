@@ -70,8 +70,8 @@ object StreamHandler {
             $"_tmp".getItem(0).as("author"),
             $"_tmp".getItem(1).as("text")
           )
-          .withColumn("number_of_words", size(split($"text", " ")))
-          .withColumn("length", length($"text"))
+          .withColumn("number_of_words", size(split($"text", " ")) - 1)
+          .withColumn("length", length($"text") - 1)
           //.withColumn("created_time", to_timestamp($"created_time"))
           .write
           .format("jdbc")
