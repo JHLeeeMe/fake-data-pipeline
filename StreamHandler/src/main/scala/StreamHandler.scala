@@ -72,7 +72,6 @@ object StreamHandler {
           )
           .withColumn("number_of_words", size(split($"text", " ")) - 1)
           .withColumn("length", length($"text") - 1)
-          //.withColumn("created_time", to_timestamp($"created_time"))
           .write
           .format("jdbc")
           .options(jdbcOptions(dbtable="words_tb"))
