@@ -77,6 +77,6 @@ master$ ./run-spark-submit.sh
 초기 id: admin, password: admin  
 data source를 postgresql로 만들고 시각화  
 
-위 스크린샷에서 보여지는 대쉬보드는 [grafana/dashboards](https://github.com/JHLeeeMe/fake-data-pipeline/tree/master/grafana/dashboards/)에 올려둠
+위 스크린샷에서 보여지는 대쉬보드는 [grafana/dashboards](https://github.com/JHLeeeMe/fake-data-pipeline/tree/master/grafana/dashboards/)에 올려둠  
 import해서 쓰면 될것이다. (이것까지 자동화해서 작성할 수 있어보이던데 귀찮아서 더 안찾아봄...)
 
