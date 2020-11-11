@@ -69,7 +69,7 @@ docker exec -it master /bin/bash
 
 # master container
 master$ cd /root/fake-data-pipeline/StreamHandler
-master$ ./run-spark-submit.
+master$ ./run-spark-submit.sh
 ```
 
 ### 5. Grafana로 시각화
