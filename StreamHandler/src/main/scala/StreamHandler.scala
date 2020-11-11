@@ -150,8 +150,8 @@ object StreamHandler {
           Map(
             "url" -> url,
             "dbtable" -> dbtable,
-            "user" -> result.get("user").get,
-            "password" -> result.get("password").get
+            "user" -> result.get("user").get
+            //"password" -> result.get("password").get
           )
         }
         case _ => sys.exit(-1)
