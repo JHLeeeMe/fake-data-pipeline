@@ -2,9 +2,10 @@
 
 
 import sys
-import time
 import random
+from time import sleep
 from kafka import KafkaProducer
+
 
 if len(sys.argv) > 2:
     print('Usage: ./words.py')
@@ -39,7 +40,7 @@ while True:
 
         print(f">>> '{msg}'")
         producer.send(TOPIC, bytes(msg, encoding='utf8'))
-        time.sleep(random.randint(1, 3))
+        sleep(random.randint(1, 3))
     except UnicodeEncodeError as err:
         print(f'ERROR --> {err}')
         continue

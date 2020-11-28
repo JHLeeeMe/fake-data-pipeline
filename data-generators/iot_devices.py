@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 
 
-from kafka import KafkaProducer
-import numpy as np
 import sys
+import numpy as np
 from time import time, sleep
-
+from kafka import KafkaProducer
 
 DEVICE_PROFILES = {
     "seoul": {'temp': (51.3, 17.7), 'humd': (77.4, 18.7), 'pres': (1019.9, 9.5)},
