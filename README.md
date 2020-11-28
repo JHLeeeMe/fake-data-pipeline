@@ -1,6 +1,3 @@
-# 미완 미완미완 미완미원 미완미완 미완미완 미완미완 미완미완 미완미완 미완
-
-
 # fake-data-pipeline
 Data Generators -> Kafka -> Spark Streaming -> PostgreSQL -> Grafana
 
@@ -11,7 +8,7 @@ Data Generators -> Kafka -> Spark Streaming -> PostgreSQL -> Grafana
 
 ### 2. Spark Structured Streaming
 - iot, words 토픽을 구독하고 처리함
-- 5초에 한번씩 토픽별로 필터링 후 집계 및 timestamp관련 작업(for 실시간 시각화)을 한 후 PostgreSQL의 pipeline_db로 쓰기작업.
+- 5초마다 토픽별로 필터링, 집계 및 timestamp관련 작업(for 실시간 시각화)을 한 후 PostgreSQL의 pipeline_db로 쓰기작업.
 - [StreamHandler.scala](https://github.com/JHLeeeMe/fake-data-pipeline/blob/master/StreamHandler/src/main/scala/StreamHandler.scala)
 
 ### 3. Grafana
@@ -58,8 +55,8 @@ master$ pip3 install -r requirements.txt
 master$ python3 data-generators/iot_devices.py <home || seoul>
 ```
 작성한 스크립트가 데몬실행에 적절하지 않음.  
-그러므로 위 3번 과정을 3번(iot_devices.py <home && seoul>, words.py) 실행시켜주어야함.  
-아니면 스크립트 수정
+그러므로 3개의 콘솔창에 각 docker master로 접근해서 실행하면 된다.  
+아니면 스크립트 수정하자.
 
 ### 4. Run spark-submit
 3번 과정에 의해 fake 데이터들이 iot, words 토픽으로 보내지는 중  
@@ -74,7 +71,7 @@ master$ ./run-spark-submit.sh
 
 ### 5. Grafana로 시각화
 웹 브라우저를 켜고 ```localhost:3000```로 접속  
-초기 id: admin, password: admin  
+(초기 id: admin, password: admin)  
 data source를 postgresql로 만들고 시각화  
 
 위 스크린샷에서 보여지는 대쉬보드는 [grafana/dashboards](https://github.com/JHLeeeMe/fake-data-pipeline/tree/master/grafana/dashboards/)에 올려둠  
