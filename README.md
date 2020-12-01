@@ -60,7 +60,8 @@ master$ python3 data-generators/iot_devices.py <home || seoul>
 
 ### 4. Run spark-submit
 3번 과정에 의해 fake 데이터들이 iot, words 토픽으로 보내지는 중  
-spark-submit을 실행시켜 데이터를 정제 후 PostgreSQL로 저장.
+```StreamHandler```를 실행시켜 데이터를 정제 후 PostgreSQL로 저장.  
+spark-submit 실행 스크립트를 만들어두었다.
 ```bash
 docker exec -it master /bin/bash
 
