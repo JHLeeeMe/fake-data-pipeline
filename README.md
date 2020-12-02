@@ -56,7 +56,9 @@ master$ python3 data-generators/iot_devices.py <home || seoul>
 ```
 작성한 스크립트가 데몬실행에 적절하지 않음.  
 그러므로 3개의 콘솔창에 각 docker master로 접근해서 실행하면 된다.  
-아니면 스크립트 수정하자.
+아니면 스크립트 수정하자.  
+***e.g.***
+![python-scripts](https://user-images.githubusercontent.com/31606119/100824954-68099b00-349a-11eb-8e39-e73a72c15c18.png)
 
 ### 4. Run spark-submit
 3번 과정에 의해 fake 데이터들이 iot, words 토픽으로 보내지는 중  
