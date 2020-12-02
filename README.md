@@ -1,5 +1,6 @@
 # fake-data-pipeline
 Data Generators -> Kafka -> Spark Streaming -> PostgreSQL -> Grafana
+![fake-data-pipleine](https://user-images.githubusercontent.com/31606119/100832952-3c8fac00-34ac-11eb-9061-6ff85e5d8807.png)
 
 ### 1. fake data -> Kafka
 - 랜덤 생성된 데이터들을 카프카 토픽으로 보냄 (Topics: iot, words)
