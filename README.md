@@ -9,7 +9,7 @@ Data Generators -> Kafka -> Spark Streaming -> PostgreSQL -> Grafana
 
 ### 2. Spark Structured Streaming
 - iot, words 토픽을 구독하고 처리함
-- 5초마다 토픽별로 필터링, 집계 및 timestamp관련 작업(for 실시간 시각화)을 한 후 PostgreSQL의 pipeline_db로 쓰기작업.
+- 5초마다 토픽별로 필터링, 집계 및 timestamp관련 작업(for 실시간 시각화)을 한 후 PostgreSQL의 pipeline_db로 적재.
 - [StreamHandler.scala](https://github.com/JHLeeeMe/fake-data-pipeline/blob/master/StreamHandler/src/main/scala/StreamHandler.scala)
 
 ### 3. Grafana
