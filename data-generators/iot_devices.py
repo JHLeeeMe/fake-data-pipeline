@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 
 import sys
@@ -6,9 +6,10 @@ import numpy as np
 from time import time, sleep
 from kafka import KafkaProducer
 
+
 DEVICE_PROFILES = {
-    "seoul": {'temp': (51.3, 17.7), 'humd': (77.4, 18.7), 'pres': (1019.9, 9.5)},
-    "home": {'temp': (49.5, 19.3), 'humd': (33.0, 13.9), 'pres': (1012.0, 41.3)},
+    "seoul": {'temp': (30.3, 7.7), 'humd': (77.4, 18.7), 'pres': (1019.9, 9.5)},
+    "home": {'temp': (24.5, 3.3), 'humd': (33.0, 13.9), 'pres': (1000.0, 11.3)},
 }
 
 if len(sys.argv) !=2 or sys.argv[1] not in DEVICE_PROFILES.keys():
