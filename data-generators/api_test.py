@@ -4,6 +4,7 @@
 import json
 import requests
 
+
 API_KEY = "<my-key>"
 
 res = requests.get('http://openapi.seoul.go.kr:8088/{}/json/bikeList'.format(API_KEY) + \
