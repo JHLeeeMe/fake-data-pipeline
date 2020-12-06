@@ -49,6 +49,7 @@ msg = []
 while True:
     if from_to[1] > 2000 :
         producer.send(TOPIC, msg)
+        print("sending...")
         from_to = [1, 1000]
         msg = []
 
