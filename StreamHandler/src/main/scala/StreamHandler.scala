@@ -27,7 +27,7 @@ object StreamHandler {
       .format("kafka")
       .options(Map(
         "kafka.bootstrap.servers" -> "kafka-single-node:9092",
-        "subscribe" -> "iot,words")
+        "subscribe" -> "iot,words,bike")
       )
       .load()
 
@@ -38,6 +38,14 @@ object StreamHandler {
       .foreachBatch { (batchDF: DataFrame, _) =>
         // cache
         batchDF.persist()
+
+        // Topic: bike
+        batchDF.where($"topic" === "bike")
+          .select($"value", $"timestamp")
+          .write
+          .format("console")
+          .mode("append")
+          .save()
 
         // Topic: iot
         batchDF.where($"topic" === "iot")
