@@ -3,6 +3,7 @@
 import sys
 import random
 from time import sleep
+
 from kafka import KafkaProducer
 
 
