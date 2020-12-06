@@ -24,8 +24,7 @@ AUTHOR = ['JHLeeeMe', 'first_user', 'second_user', 'third_user']
 try:
     producer = KafkaProducer(bootstrap_servers=BROKER)
 except Exception as e:
-    print(f'ERROR --> {e}')
-    sys.exit(0)
+    sys.exit(e)
 
 while True:
     try:
