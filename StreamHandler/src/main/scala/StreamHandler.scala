@@ -4,7 +4,12 @@ import org.apache.spark.sql.streaming._
 import org.apache.spark.sql.types._
 
 //case class IOTData(device: String, temp: Double, humd: Double, pres: Double)
-//case class WordsData(author: String, text: String, words:Int, length: Int)
+//case class WordsData(author: String, text: String, words: Int, length: Int)
+case class BikeData(
+  stationId: String, stationName: String, rackCnt: Int, parkingBikeCnt: Int, parkingRate: Int,
+  stationLat: Float, stationLng: Float, 
+  ts: java.sql.Timestamp
+)
 
 object StreamHandler {
   def main(args: Array[String]): Unit = {
@@ -39,13 +44,13 @@ object StreamHandler {
         // cache
         batchDF.persist()
 
-        // Topic: bike
-        batchDF.where($"topic" === "bike")
-          .select($"value", $"timestamp")
-          .write
-          .format("console")
-          .mode("append")
-          .save()
+        //// Topic: bike
+        //batchDF.where($"topic" === "bike")
+        //  .select($"value", $"timestamp")
+        //  .write
+        //  .format("console")
+        //  .mode("append")
+        //  .save()
 
         // Topic: iot
         batchDF.where($"topic" === "iot")
@@ -159,6 +164,7 @@ object StreamHandler {
             "url" -> url,
             "dbtable" -> dbtable,
             "user" -> result.get("user").get
+            //"user" -> result("user")
             //"password" -> result.get("password").get
           )
         }
