@@ -5,10 +5,15 @@ import org.apache.spark.sql.types._
 
 //case class IOTData(device: String, temp: Double, humd: Double, pres: Double)
 //case class WordsData(author: String, text: String, words: Int, length: Int)
+//case class BikeData(
+//  stationId: String, stationName: String, rackCnt: Int, parkingBikeCnt: Int, parkingRate: Int,
+//  stationLat: Double, stationLng: Double, 
+//  ts: java.sql.Timestamp
+//)
 case class BikeData(
-  stationId: String, stationName: String, rackCnt: Int, parkingBikeCnt: Int, parkingRate: Int,
-  stationLat: Float, stationLng: Float, 
-  ts: java.sql.Timestamp
+  rackTotCnt: Int, stationName: String, parkingBikeTotCnt: Int, shared: Int,
+  stationLatitude: Double, stationLongitude: Double,
+  stationId: String
 )
 
 object StreamHandler {
@@ -44,14 +49,27 @@ object StreamHandler {
         // cache
         batchDF.persist()
 
-        //// Topic: bike
-        //batchDF.where($"topic" === "bike")
-        //  .select($"value", $"timestamp")
-        //  .write
-        //  .format("console")
-        //  .mode("append")
-        //  .save()
+        val schema_tmp = StructType(Seq(
+          StructField("rackTotCnt", IntegerType, true),
+          StructField("stationName", StringType, true),
+          StructField("parkingBikeTotCnt", IntegerType, true),
+          StructField("shared", IntegerType, true),
+          StructField("stationLatitude", DoubleType, true),
+          StructField("stationLongitude", DoubleType, true),
+          StructField("stationId", StringType, true)
+        ))
 
+        // Topic: bike
+        batchDF.where($"topic" === "bike")
+          .select($"value", $"timestamp")
+          //.select(from_json($"value", Encoders.product[BikeData].schema) as "value")
+          .withColumn("jsonData", from_json($"value", schema_tmp))
+          .select("*")
+          .write
+          .format("console")
+          .mode("append")
+          .save()
+        
         // Topic: iot
         batchDF.where($"topic" === "iot")
           .withColumn("_tmp", split($"value", ","))
