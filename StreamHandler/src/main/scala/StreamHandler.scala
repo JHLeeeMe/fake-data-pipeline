@@ -52,27 +52,20 @@ object StreamHandler {
         // Topic: bike
         //batchDF.where($"topic" === "bike")
         //  .select($"value")
-        //  .select(from_json($"value".cast("string"), Encoders.product[BikeData].schema) as "value")
+        //  .select(from_json($"value", Encoders.product[BikeData].schema) as "value")
         //  .select("value.*")
         //  .write
         //  .format("console")
         //  .mode("append")
         //  .save()
 
-        def parseData(df: DataFrame): Dataset[String] = {
-          val a = df.select($"value")
-          val b = a map {
-            x => x.toString
-          } map {
-            y => y.slice(1, y.length - 1)
-          }
-
-          b
-        }
+        // Topic: bike
         val bikeDF = batchDF.where($"topic" === "bike")
-        val tmp = parseData(bikeDF)
-        val k = spark.read.json(tmp)
-        if (k.columns.size != 0) {
+        val parsedBikeDF = {
+          val tmpDS: Dataset[String] = parseData(bikeDF)
+          spark.read.json(tmpDF)
+        }
+        if (parsedBikeDF.columns.size != 0) {
           //k.select($"rackTotCnt")
           k.select("*")
             .withColumn("ts", current_timestamp())
@@ -132,52 +125,6 @@ object StreamHandler {
       .start()
 
     query.awaitTermination()
-
-    //val query = rawDS.writeStream
-    //  .trigger(Trigger.ProcessingTime("5 seconds"))
-    //  .foreachBatch { (batchDS: Dataset[(String, String)], _) =>
-    //    // cache
-    //    batchDS.persist()
-
-    //    // Topic: iot
-    //    batchDS.filter(_._1 == "iot")
-    //      .map { _._2.split(",") }
-    //      .map { x => 
-    //        IOTData(x(1), x(2).toDouble, x(3).toDouble, x(4).toDouble)
-    //      }
-    //      .groupBy("device")
-    //      .agg(avg("temp"), avg("humd"), avg("pres"))
-    //      .withColumnRenamed("avg(temp)", "temp")
-    //      .withColumnRenamed("avg(humd)", "humd")
-    //      .withColumnRenamed("avg(pres)", "pres")
-    //      .write
-    //      .format("jdbc")
-    //      .options(jdbcOptions(dbtable="iot_tb"))
-    //      .mode("append")
-    //      .save()
-
-    //    // Topic: words
-    //    batchDS.filter(_._1 == "words")
-    //      .map { _._2.split(",") }
-    //      .map { x => 
-    //        WordsData(x(0), x(1), x(1).split(" ").length, x(1).length) 
-    //      }
-    //      .write
-    //      .format("jdbc")
-    //      .options(jdbcOptions(dbtable="words_tb"))
-    //      .mode("append")
-    //      .save()
-
-    //    println("write to postgresql")
-
-    //    // uncache
-    //    batchDS.unpersist()
-    //  }
-    //  .outputMode("update")
-    //  //.format("console")
-    //  .start()
-
-    //query.awaitTermination()
   }
 
   def jdbcOptions(url: String = "jdbc:postgresql://postgresql:5432/pipeline_db", 
@@ -202,5 +149,16 @@ object StreamHandler {
         }
         case _ => sys.exit(-1)
       }
+  }
+
+  def parseData(df: DataFrame): Dataset[String] = {
+    val a = df.select($"value")
+    val b = a map {
+      x => x.toString
+    } map {
+      y => y.slice(1, y.length - 1)
+    }
+
+    b
   }
 }
