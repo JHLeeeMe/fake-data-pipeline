@@ -49,26 +49,40 @@ object StreamHandler {
         // cache
         batchDF.persist()
 
-        val schema_tmp = StructType(Seq(
-          StructField("rackTotCnt", IntegerType, true),
-          StructField("stationName", StringType, true),
-          StructField("parkingBikeTotCnt", IntegerType, true),
-          StructField("shared", IntegerType, true),
-          StructField("stationLatitude", DoubleType, true),
-          StructField("stationLongitude", DoubleType, true),
-          StructField("stationId", StringType, true)
-        ))
-
         // Topic: bike
-        batchDF.where($"topic" === "bike")
-          .select($"value", $"timestamp")
-          //.select(from_json($"value", Encoders.product[BikeData].schema) as "value")
-          .withColumn("jsonData", from_json($"value", schema_tmp))
-          .select("*")
-          .write
-          .format("console")
-          .mode("append")
-          .save()
+        //batchDF.where($"topic" === "bike")
+        //  .select($"value")
+        //  .select(from_json($"value".cast("string"), Encoders.product[BikeData].schema) as "value")
+        //  .select("value.*")
+        //  .write
+        //  .format("console")
+        //  .mode("append")
+        //  .save()
+
+        def parseData(df: DataFrame): Dataset[String] = {
+          val a = df.select($"value")
+          val b = a map {
+            x => x.toString
+          } map {
+            y => y.slice(1, y.length - 1)
+          }
+
+          b
+        }
+        val bikeDF = batchDF.where($"topic" === "bike")
+        val tmp = parseData(bikeDF)
+        val k = spark.read.json(tmp)
+        if (k.columns.size != 0) {
+          //k.select($"rackTotCnt")
+          k.select("*")
+            .withColumn("ts", current_timestamp())
+            .write
+            //.format("console")
+            .format("jdbc")
+            .options(jdbcOptions(dbtable="bike_tb"))
+            .mode("append")
+            .save()
+        }
         
         // Topic: iot
         batchDF.where($"topic" === "iot")
