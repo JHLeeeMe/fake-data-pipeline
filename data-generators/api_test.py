@@ -66,6 +66,6 @@ while True:
     from_to[0] = from_to[1] + 1
     from_to[1] += 1000
 
-    sleep(.5)
+    sleep(2)
 
 
