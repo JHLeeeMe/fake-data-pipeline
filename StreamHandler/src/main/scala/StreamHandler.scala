@@ -66,8 +66,8 @@ object StreamHandler {
           spark.read.json(tmpDF)
         }
         if (parsedBikeDF.columns.size != 0) {
-          //k.select($"rackTotCnt")
-          k.select("*")
+          //parsedBikeDF.select($"rackTotCnt")
+          parsedBikeDF.select("*")
             .withColumn("ts", current_timestamp())
             .write
             //.format("console")
@@ -153,12 +153,11 @@ object StreamHandler {
 
   def parseData(df: DataFrame): Dataset[String] = {
     val a = df.select($"value")
-    val b = a map {
+
+    a map {
       x => x.toString
     } map {
       y => y.slice(1, y.length - 1)
     }
-
-    b
   }
 }
