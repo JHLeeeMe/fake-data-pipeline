@@ -36,20 +36,24 @@ API_KEY_PATH = 'secrets/api_keys.json'
 with open(API_KEY_PATH, 'r') as key_file:
     API_KEY: str = json.load(key_file)['key']
 
-try:
-    producer = KafkaProducer(
-            bootstrap_servers=BROKER,
-            value_serializer=lambda x: json.dumps(x).encode('utf-8')
-        )
-except Exception as e:
-    sys.exit(e)
+for i in range(5):
+    try:
+        producer = KafkaProducer(
+                bootstrap_servers=BROKER,
+                value_serializer=lambda x: json.dumps(x).encode('utf-8')
+            )
+    except Exception as e:
+        print(f'retries: {i}')
+        print(e)
+        continue
+    break
 
 from_to = [1, 1000]
 msg = []
 while True:
     if from_to[1] > 2000 :
+        print("sending seoul bike info...")
         producer.send(TOPIC, msg)
-        print("sending...")
         from_to = [1, 1000]
         msg = []
 
