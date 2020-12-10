@@ -17,7 +17,7 @@ BROKER = 'kafka-single-node:9092'
 TOPIC = 'words'
 
 #WORD_FILE = '/usr/share/dict/american-english'
-WORD_FILE = './american-english'
+WORD_FILE = './resources/american-english'
 WORDS = open(WORD_FILE, encoding='utf-8').read().splitlines()
 
 AUTHOR = ['JHLeeeMe', 'first_user', 'second_user', 'third_user']

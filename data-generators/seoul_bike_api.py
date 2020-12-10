@@ -31,7 +31,7 @@ def get_source(API_KEY: str, _from: int = 1, _to: int = 1000) -> str:
 BROKER = 'kafka-single-node:9092'
 TOPIC = 'bike'
 
-API_KEY_PATH = 'secrets/api_keys.json'
+API_KEY_PATH = './resources/secrets/api_keys.json'
 
 with open(API_KEY_PATH, 'r') as key_file:
     API_KEY: str = json.load(key_file)['key']
