@@ -62,7 +62,7 @@ object StreamHandler {
         // Topic: bike
         val bikeDF = batchDF.where($"topic" === "bike")
         val parsedBikeDF = {
-          val tmpDS: Dataset[String] = parseData(bikeDF)
+          val tmpDS: Dataset[String] = parseData(spark=spark, df=bikeDF)
           spark.read.json(tmpDS)
         }
         if (parsedBikeDF.columns.size != 0) {
@@ -153,7 +153,10 @@ object StreamHandler {
       }
   }
 
-  def parseData(df: DataFrame): Dataset[String] = {
+  def parseData(spark: SparkSession, df: DataFrame): Dataset[String] = {
+
+    import spark.implicits._
+
     val a = df.select($"value")
 
     a map {
