@@ -63,14 +63,16 @@ object StreamHandler {
         val bikeDF = batchDF.where($"topic" === "bike")
         val parsedBikeDF = {
           val tmpDS: Dataset[String] = parseData(bikeDF)
-          spark.read.json(tmpDF)
+          spark.read.json(tmpDS)
         }
         if (parsedBikeDF.columns.size != 0) {
-          //parsedBikeDF.select($"rackTotCnt")
-          parsedBikeDF.select("*")
+          parsedBikeDF.select(
+            $"rackTotCnt".cast("Int"), $"stationName", $"parkingBikeTotCnt".cast("Int"), $"shared".cast("Int"), 
+            $"stationLatitude".cast("Double"), $"stationLongitude".cast("Double"), 
+            $"stationId"
+          )
             .withColumn("ts", current_timestamp())
             .write
-            //.format("console")
             .format("jdbc")
             .options(jdbcOptions(dbtable="bike_tb"))
             .mode("append")
