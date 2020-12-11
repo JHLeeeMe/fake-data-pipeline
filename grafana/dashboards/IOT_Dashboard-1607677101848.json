@@ -1,8 +1,8 @@
 {
   "__inputs": [
     {
-      "name": "DS_FAKE-DATA-PIPELINE_POSTGRESQL",
-      "label": "fake-data-pipeline_PostgreSQL",
+      "name": "DS_FAKE-DATA-PIPELINE",
+      "label": "fake-data-pipeline",
       "description": "",
       "type": "datasource",
       "pluginId": "postgres",
@@ -65,7 +65,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_FAKE-DATA-PIPELINE_POSTGRESQL}",
+      "datasource": "${DS_FAKE-DATA-PIPELINE}",
       "description": "집, 서울의 실시간 온도",
       "fieldConfig": {
         "defaults": {
@@ -185,7 +185,7 @@
       "yaxes": [
         {
           "$$hashKey": "object:209",
-          "format": "fahrenheit",
+          "format": "celsius",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -212,7 +212,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_FAKE-DATA-PIPELINE_POSTGRESQL}",
+      "datasource": "${DS_FAKE-DATA-PIPELINE}",
       "description": "집, 서울의 실시간 습도",
       "fieldConfig": {
         "defaults": {
@@ -359,7 +359,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_FAKE-DATA-PIPELINE_POSTGRESQL}",
+      "datasource": "${DS_FAKE-DATA-PIPELINE}",
       "description": "집, 서울의 실시간 기압",
       "fieldConfig": {
         "defaults": {
@@ -502,7 +502,7 @@
       }
     },
     {
-      "datasource": "${DS_FAKE-DATA-PIPELINE_POSTGRESQL}",
+      "datasource": "${DS_FAKE-DATA-PIPELINE}",
       "description": "평균 온도",
       "fieldConfig": {
         "defaults": {
@@ -603,7 +603,7 @@
       "type": "gauge"
     },
     {
-      "datasource": "${DS_FAKE-DATA-PIPELINE_POSTGRESQL}",
+      "datasource": "${DS_FAKE-DATA-PIPELINE}",
       "description": "평균 습도",
       "fieldConfig": {
         "defaults": {
@@ -704,7 +704,7 @@
       "type": "gauge"
     },
     {
-      "datasource": "${DS_FAKE-DATA-PIPELINE_POSTGRESQL}",
+      "datasource": "${DS_FAKE-DATA-PIPELINE}",
       "description": "평균 기압",
       "fieldConfig": {
         "defaults": {
@@ -805,7 +805,7 @@
       "type": "gauge"
     },
     {
-      "datasource": "${DS_FAKE-DATA-PIPELINE_POSTGRESQL}",
+      "datasource": "${DS_FAKE-DATA-PIPELINE}",
       "description": "수집 데이터",
       "fieldConfig": {
         "defaults": {
