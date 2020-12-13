@@ -3,13 +3,6 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.sql.streaming._
 import org.apache.spark.sql.types._
 
-//case class IOTData(device: String, temp: Double, humd: Double, pres: Double)
-//case class WordsData(author: String, text: String, words: Int, length: Int)
-//case class BikeData(
-//  stationId: String, stationName: String, rackCnt: Int, parkingBikeCnt: Int, parkingRate: Int,
-//  stationLat: Double, stationLng: Double, 
-//  ts: java.sql.Timestamp
-//)
 case class BikeData(
   rackTotCnt: Int, stationName: String, parkingBikeTotCnt: Int, shared: Int,
   stationLatitude: Double, stationLongitude: Double,
