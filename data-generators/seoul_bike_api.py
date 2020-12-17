@@ -9,6 +9,29 @@ from typing import List, Dict
 from kafka import KafkaProducer
 
 
+def resp_msg(result_code: str) -> bool:
+    if result_code == 'INFO-000':
+        return True
+    elif result_code == 'INFO-100':
+        print('Authentication key is not valid.')
+    elif result_code == 'INFO-200':
+        print('No data found.')
+    elif result_code == 'ERROR-331':
+        print('Check START_INDEX')
+    elif result_code == 'ERROR-332':
+        print('Check END_INDEX')
+    elif result_code == 'ERROR-336':
+        print('The number of data requests cannot exceed 1000.')
+    elif result_code == 'ERROR-500':
+        print('Server error.')
+    elif result_code == 'ERROR-600':
+        print('Server database error.')
+    elif result_code == 'ERROR-601':
+        print('Server SQL query error')
+
+    return False
+
+
 def get_source(API_KEY: str, _from: int = 1, _to: int = 1000) -> str:
     """Get response
 
@@ -63,13 +86,13 @@ while True:
     bike_status: Dict = data_json['rentBikeStatus']
     result: Dict = bike_status['RESULT']
 
-    if result['CODE'] == 'INFO-000':
+    if resp_msg(result['CODE']):
         rows: List[Dict] = bike_status['row']
     msg += rows
 
     from_to[0] = from_to[1] + 1
     from_to[1] += 1000
 
-    sleep(2)
+    sleep(29)
 
 
