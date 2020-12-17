@@ -14,14 +14,6 @@ def resp_msg(result_code: str) -> bool:
         return True
     elif result_code == 'INFO-100':
         print('Authentication key is not valid.')
-    elif result_code == 'INFO-200':
-        print('No data found.')
-    elif result_code == 'ERROR-331':
-        print('Check START_INDEX')
-    elif result_code == 'ERROR-332':
-        print('Check END_INDEX')
-    elif result_code == 'ERROR-336':
-        print('The number of data requests cannot exceed 1000.')
     elif result_code == 'ERROR-500':
         print('Server error.')
     elif result_code == 'ERROR-600':
