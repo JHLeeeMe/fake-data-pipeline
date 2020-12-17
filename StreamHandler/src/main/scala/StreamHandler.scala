@@ -3,12 +3,6 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.sql.streaming._
 import org.apache.spark.sql.types._
 
-case class BikeData(
-  rackTotCnt: Int, stationName: String, parkingBikeTotCnt: Int, shared: Int,
-  stationLatitude: Double, stationLongitude: Double,
-  stationId: String
-)
-
 object StreamHandler {
   def main(args: Array[String]): Unit = {
     //import java.util.Properties
@@ -41,16 +35,6 @@ object StreamHandler {
       .foreachBatch { (batchDF: DataFrame, _) =>
         // cache
         batchDF.persist()
-
-        // Topic: bike
-        //batchDF.where($"topic" === "bike")
-        //  .select($"value")
-        //  .select(from_json($"value", Encoders.product[BikeData].schema) as "value")
-        //  .select("value.*")
-        //  .write
-        //  .format("console")
-        //  .mode("append")
-        //  .save()
 
         // Topic: bike
         val bikeDF = batchDF.where($"topic" === "bike")
