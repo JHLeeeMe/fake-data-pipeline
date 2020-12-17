@@ -8,12 +8,12 @@ Data Generators -> Kafka -> Spark Streaming -> PostgreSQL -> Grafana
 - [data-generators/words.py](https://github.com/JHLeeeMe/fake-data-pipeline/blob/master/data-generators/words.py)
 - [data-generators/seoul_bike_api.py](https://github.com/JHLeeeMe/fake-data-pipeline/blob/master/data-generators/seoul_bike_api.py) (Not fake!)
 
-### 2. Spark Structured Streaming
+### 2. Kafka <- Spark Structured Streaming -> PostgreSQL
 - iot, words, bike 토픽을 구독하고 처리함
 - 5초마다 토픽별로 필터링, 집계 및 timestamp관련 작업(for 실시간 시각화)을 한 후 PostgreSQL의 pipeline_db로 적재.
 - [StreamHandler.scala](https://github.com/JHLeeeMe/fake-data-pipeline/blob/master/StreamHandler/src/main/scala/StreamHandler.scala)
 
-### 3. Grafana
+### 3. PostgreSQL <- Grafana
 - PostgreSQL에 담겨지는 데이터들을 시각화
 
 **IOT Dashboard**
