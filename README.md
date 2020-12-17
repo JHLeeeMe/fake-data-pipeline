@@ -6,9 +6,10 @@ Data Generators -> Kafka -> Spark Streaming -> PostgreSQL -> Grafana
 - 랜덤 생성된 데이터들을 카프카 토픽으로 보냄 (Topics: iot, words)
 - [data-generators/iot_devices.py](https://github.com/JHLeeeMe/fake-data-pipeline/blob/master/data-generators/iot_devices.py)
 - [data-generators/words.py](https://github.com/JHLeeeMe/fake-data-pipeline/blob/master/data-generators/words.py)
+- [data-generators/seoul_bike_api.py](https://github.com/JHLeeeMe/fake-data-pipeline/blob/master/data-generators/seoul_bike_api.py) (Not fake!)
 
 ### 2. Spark Structured Streaming
-- iot, words 토픽을 구독하고 처리함
+- iot, words, bike 토픽을 구독하고 처리함
 - 5초마다 토픽별로 필터링, 집계 및 timestamp관련 작업(for 실시간 시각화)을 한 후 PostgreSQL의 pipeline_db로 적재.
 - [StreamHandler.scala](https://github.com/JHLeeeMe/fake-data-pipeline/blob/master/StreamHandler/src/main/scala/StreamHandler.scala)
 
@@ -20,6 +21,9 @@ Data Generators -> Kafka -> Spark Streaming -> PostgreSQL -> Grafana
 
 **Words Dashboard**
 ![Words_Dashboard](https://user-images.githubusercontent.com/31606119/98819004-ac8fb100-246f-11eb-9f1e-99548f1cd30f.png)
+
+**Bike Dashboard**
+![Bike_Dashboard](https://user-images.githubusercontent.com/31606119/102494317-d0ba5f80-40b7-11eb-8759-719b395f322b.png)
 
 ---
 
