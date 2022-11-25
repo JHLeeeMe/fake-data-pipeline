@@ -57,11 +57,13 @@ for i in range(5):
                 bootstrap_servers=BROKER,
                 value_serializer=lambda x: json.dumps(x).encode('utf-8')
             )
+        break
     except Exception as e:
         print(f'retries: {i}')
         print(e)
+        if i == 4:
+            sys.exit()
         continue
-    break
 
 from_to = [1, 1000]
 msg = []
@@ -78,13 +80,15 @@ while True:
     bike_status: Dict = data_json['rentBikeStatus']
     result: Dict = bike_status['RESULT']
 
-    if resp_msg(result['CODE']):
-        rows: List[Dict] = bike_status['row']
+    if not resp_msg(result['CODE']):
+        sleep(5)
+        continue
+
+    rows: List[Dict] = bike_status['row']
     msg += rows
 
     from_to[0] = from_to[1] + 1
     from_to[1] += 1000
 
     sleep(29)
-
 

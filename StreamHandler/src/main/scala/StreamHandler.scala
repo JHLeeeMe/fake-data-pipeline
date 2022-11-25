@@ -44,8 +44,12 @@ object StreamHandler {
         }
         if (parsedBikeDF.columns.size != 0) {
           parsedBikeDF.select(
-            $"rackTotCnt".cast("Int"), $"stationName", $"parkingBikeTotCnt".cast("Int"), $"shared".cast("Int"), 
-            $"stationLatitude".cast("Double"), $"stationLongitude".cast("Double"), 
+            $"rackTotCnt".cast("Int"),
+            $"stationName",
+            $"parkingBikeTotCnt".cast("Int"),
+            $"shared".cast("Int"),
+            $"stationLatitude".cast("Double"),
+            $"stationLongitude".cast("Double"),
             $"stationId"
           )
             .withColumn("ts", current_timestamp())
@@ -55,7 +59,7 @@ object StreamHandler {
             .mode("append")
             .save()
         }
-        
+
         // Topic: iot
         batchDF.where($"topic" === "iot")
           .withColumn("_tmp", split($"value", ","))
@@ -106,27 +110,29 @@ object StreamHandler {
     query.awaitTermination()
   }
 
-  def jdbcOptions(url: String = "jdbc:postgresql://postgresql:5432/pipeline_db", 
-    dbtable: String): Map[String, String] = {
+  def jdbcOptions(
+    url: String = "jdbc:postgresql://postgresql:5432/pipeline_db",
+    dbtable: String
+  ): Map[String, String] = {
 
-      import scala.util.parsing.json._
+    import scala.util.parsing.json._
 
-      val source = JSON.parseFull(
-        scala.io.Source.fromFile("src/resources/secrets/secrets.json").mkString
-      )
+    val source = JSON.parseFull(
+      scala.io.Source.fromFile("src/resources/secrets/secrets.json").mkString
+    )
 
-      source match {
-        case Some(e) => {
-          val result = e.asInstanceOf[Map[String, String]]
-          Map(
-            "url" -> url,
-            "dbtable" -> dbtable,
-            "user" -> result("user")
-            //"password" -> result("password")
-          )
-        }
-        case _ => sys.exit(-1)
+    source match {
+      case Some(e) => {
+        val result = e.asInstanceOf[Map[String, String]]
+        Map(
+          "url" -> url,
+          "dbtable" -> dbtable,
+          "user" -> result("user")
+          //"password" -> result("password")
+        )
       }
+      case _ => sys.exit(-1)
+    }
   }
 
   def parseData(spark: SparkSession, df: DataFrame): Dataset[String] = {
