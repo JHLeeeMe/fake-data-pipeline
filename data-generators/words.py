@@ -22,10 +22,17 @@ WORDS = open(WORD_FILE, encoding='utf-8').read().splitlines()
 
 AUTHOR = ['JHLeeeMe', 'first_user', 'second_user', 'third_user']
 
-try:
-    producer = KafkaProducer(bootstrap_servers=BROKER)
-except Exception as e:
-    sys.exit(e)
+for i in range(5):
+    try:
+        producer = KafkaProducer(bootstrap_servers=BROKER)
+        break
+    except Exception as e:
+        print('error KafkaProducer(...)')
+        print(f'retries: {i}')
+        print(e)
+        if i == 4:
+            sys.exit()
+        continue
 
 while True:
     try:
@@ -43,3 +50,4 @@ while True:
     except UnicodeEncodeError as err:
         print(f'ERROR --> {err}')
         continue
+
