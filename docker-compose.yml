@@ -12,9 +12,9 @@ services:
     tty: true        # -t option
     volumes:
       - .:/root/fake-data-pipeline/.
-    ports: 
+    ports:
       - 28088:8088
-    environment: 
+    environment:
       - SLAVE_NUM=3
     depends_on:
       - slave-1
@@ -77,8 +77,8 @@ services:
     hostname: postgresql
     restart: always
     environment:
-      # - POSTGRES_USER=<user>
-      # - POSTGRES_PASSWORD=<password>
+      - POSTGRES_USER=scott
+      - POSTGRES_PASSWORD=tiger
       - POSTGRES_HOST_AUTH_METHOD=trust
       - POSTGRES_DB=pipeline_db
     networks:
