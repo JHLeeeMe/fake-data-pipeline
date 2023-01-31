@@ -47,48 +47,38 @@ BROKER = 'kafka-single-node:9092'
 TOPIC = 'bike'
 
 API_KEY_PATH = './resources/secrets/api_keys.json'
-
 with open(API_KEY_PATH, 'r') as key_file:
     API_KEY: str = json.load(key_file)['key']
 
-for i in range(5):
-    try:
-        producer = KafkaProducer(
-                bootstrap_servers=BROKER,
-                value_serializer=lambda x: json.dumps(x).encode('utf-8')
-            )
-        break
-    except Exception as e:
-        print(f'retries: {i}')
-        print(e)
-        if i == 4:
-            sys.exit()
-        continue
+if __name__ == '__main__':
+    producer = KafkaProducer(
+            bootstrap_servers=BROKER,
+            value_serializer=lambda x: json.dumps(x).encode('utf-8'))
 
-from_to = [1, 1000]
-msg = []
-while True:
-    if from_to[1] > 2000 :
-        print("sending seoul bike info...")
-        producer.send(TOPIC, msg)
-        from_to = [1, 1000]
-        msg = []
+    from_to = [1, 1000]
+    msg = []
+    while True:
+        if from_to[1] > 2000 :
+            print("sending seoul bike info...")
+            producer.send(TOPIC, msg)
+            from_to = [1, 1000]
+            msg = []
 
-    data = get_source(API_KEY, from_to[0], from_to[1])
+        data = get_source(API_KEY, from_to[0], from_to[1])
 
-    data_json: Dict = json.loads(data)
-    bike_status: Dict = data_json['rentBikeStatus']
-    result: Dict = bike_status['RESULT']
+        data_json: Dict = json.loads(data)
+        bike_status: Dict = data_json['rentBikeStatus']
+        result: Dict = bike_status['RESULT']
 
-    if not resp_msg(result['CODE']):
-        sleep(5)
-        continue
+        if not resp_msg(result['CODE']):
+            sleep(5)
+            continue
 
-    rows: List[Dict] = bike_status['row']
-    msg += rows
+        rows: List[Dict] = bike_status['row']
+        msg += rows
 
-    from_to[0] = from_to[1] + 1
-    from_to[1] += 1000
+        from_to[0] = from_to[1] + 1
+        from_to[1] += 1000
 
-    sleep(29)
+        sleep(29)
 
